@@ -17,7 +17,7 @@ public class Main {
                     BigInteger.valueOf(a),
                     n, s, r.intValue()
             );
-            String pString = rabinMiller.isPrime() ? "prime" : "not prime";
+            String pString = rabinMiller.isPrime2() ? "prime" : "not prime";
             System.out.println(n + " is " + pString + " for a = " + a);
         }
         double t2 = System.currentTimeMillis();

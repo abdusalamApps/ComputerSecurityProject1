@@ -15,6 +15,7 @@ public class RabinMiller {
     }
 
     private boolean isFirstCondition() {
+
         return !a.modPow(s, n).equals(n.add(BigInteger.ONE));
     }
 
@@ -23,7 +24,6 @@ public class RabinMiller {
         BigInteger bExp;
         for (int j = 0; j <= r - 1; j++) {
             exp = (Math.pow(2, j) * s.doubleValue());
-//            System.out.println("exp = " + exp);
             BigDecimal bigDecimalExp = BigDecimal.valueOf(exp);
             bExp = bigDecimalExp.toBigInteger();
             if (a.modPow(bExp, n).equals(n.subtract(BigInteger.ONE))) {
