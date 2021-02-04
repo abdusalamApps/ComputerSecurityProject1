@@ -52,4 +52,10 @@ public class RabinMiller {
         return !(isFirstCondition() && isSecondCondition2());
     }
 
+
+    public BigInteger[] generateTwoPrimes(int length){
+        BigInteger[] twoPrimes= new BigInteger[2];
+
+        return twoPrimes;
+    }
 }
