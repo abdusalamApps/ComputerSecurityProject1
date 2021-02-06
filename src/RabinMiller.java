@@ -56,6 +56,7 @@ public class RabinMiller {
     public BigInteger[] generateTwoPrimes(int length){
         BigInteger[] twoPrimes= new BigInteger[2];
 
+        
         return twoPrimes;
     }
 }
