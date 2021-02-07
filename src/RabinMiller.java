@@ -67,13 +67,14 @@ public class RabinMiller {
 
         double t1 = System.currentTimeMillis();
         Random random = new Random();
-        BigInteger n = BigInteger.probablePrime(512, random);
+//        BigInteger n = BigInteger.probablePrime(bitLength, random);
+        BigInteger n = new BigInteger(bitLength, 16, random);
         BigInteger s = new BigInteger("3");
         BigInteger r = new BigInteger("2");
 
         while (primes.size() < count) {
             for (int i = 0; i < 10; i++) {
-                System.out.println("n = " + n.intValue());
+//                System.out.println("n = " + n.intValue());
                 int a = 1 + random.nextInt(n.intValue() < 0 ? n.intValue() * -1 : n.intValue());
                 RabinMiller rabinMiller = new RabinMiller(
                         BigInteger.valueOf(a),
@@ -85,7 +86,7 @@ public class RabinMiller {
                     break;
                 }
             }
-            n = BigInteger.probablePrime(512, random);
+            n = new BigInteger(bitLength, 16, random);
         }
         double t2 = System.currentTimeMillis();
         System.out.println("Time taken = " + (t2 - t1) + " ms");
