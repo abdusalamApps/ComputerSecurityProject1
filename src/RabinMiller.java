@@ -54,49 +54,77 @@ public class RabinMiller {
         return !(isFirstCondition() && isSecondCondition2());
     }
 
-
-    public BigInteger[] generateTwoPrimes(int length) {
-        BigInteger[] twoPrimes = new BigInteger[2];
-
-
-        return twoPrimes;
-    }
-
-    public static List<BigInteger> generatePrimes(int count, int bitLength) {
-        List<BigInteger> primes = new ArrayList<>();
-
-        double t1 = System.currentTimeMillis();
+    public static BigInteger[] generatePrimes(int count, int bitLength) {
         Random random = new Random();
-//        BigInteger n = BigInteger.probablePrime(bitLength, random);
-        BigInteger n = new BigInteger(bitLength, 16, random);
-        BigInteger s = new BigInteger("3");
-        BigInteger r = new BigInteger("2");
-
-        while (primes.size() < count) {
-            for (int i = 0; i < 10; i++) {
-//                System.out.println("n = " + n.intValue());
-                int a = 1 + random.nextInt(n.intValue() < 0 ? n.intValue() * -1 : n.intValue());
-                RabinMiller rabinMiller = new RabinMiller(
-                        BigInteger.valueOf(a),
-                        n, s, r.intValue()
-                );
-
-                if (rabinMiller.isPrime()) {
-                    primes.add(n);
-                    break;
-                }
-            }
-            n = new BigInteger(bitLength, 16, random);
+        BigInteger[] primes = new BigInteger[count];
+        double t1 = System.currentTimeMillis();
+        for (int i = 0; i < count; i++) {
+            primes[i] = BigInteger.probablePrime(bitLength, random);
         }
         double t2 = System.currentTimeMillis();
         System.out.println("Time taken = " + (t2 - t1) + " ms");
-
         return primes;
     }
 
-    public static Byte[] bytesArray(int bitLength) {
-        Byte[] bytes = new Byte[bitLength/8];
-
-        return bytes;
+    public static BigInteger generateE(BigInteger p, BigInteger q) {
+        BigInteger m = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+        BigInteger e = BigInteger.TWO;
+        while (!m.gcd(e).equals(BigInteger.ONE)) {
+            e = e.add(BigInteger.ONE);
+        }
+        return e;
     }
+
+    public static BigInteger inverseMod(BigInteger p, BigInteger q) throws Exception {
+        BigInteger a = RabinMiller.generateE(p, q);
+        BigInteger qn = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+        BigInteger v1 = BigInteger.ZERO;
+        BigInteger v2 = BigInteger.ONE;
+        BigInteger d1 = qn;
+        BigInteger d2 = a;
+
+        while (!d2.equals(BigInteger.ZERO)) {
+            q = d1.divide(d2);
+            BigInteger t2 = v1.subtract(q.multiply(v2));
+            BigInteger t3 = d1.subtract(q.multiply(d2));
+            v1 = v2;
+            d1 = d2;
+            v2 = t2;
+            d2 = t3;
+        }
+        BigInteger v = v1;
+        BigInteger d = d1;
+        if (d.equals(BigInteger.ONE)) {
+            return v;
+        } else {
+            throw new Exception("(a mod m) has no inverse");
+        }
+    }
+
+    public static BigInteger inverseModFixedE(BigInteger p, BigInteger q) throws Exception {
+        BigInteger a = BigInteger.TWO.pow(16).add(BigInteger.ONE);
+        BigInteger qn = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+        BigInteger v1 = BigInteger.ZERO;
+        BigInteger v2 = BigInteger.ONE;
+        BigInteger d1 = qn;
+        BigInteger d2 = a;
+
+        while (!d2.equals(BigInteger.ZERO)) {
+            q = d1.divide(d2);
+            BigInteger t2 = v1.subtract(q.multiply(v2));
+            BigInteger t3 = d1.subtract(q.multiply(d2));
+            v1 = v2;
+            d1 = d2;
+            v2 = t2;
+            d2 = t3;
+        }
+        BigInteger v = v1;
+        BigInteger d = d1;
+        if (d.equals(BigInteger.ONE)) {
+            return v;
+        } else {
+            throw new Exception("(a mod m) has no inverse");
+        }
+    }
+
 }
