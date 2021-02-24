@@ -10,33 +10,33 @@ public class TLSServer {
     private static final int PORT = 8043;
 
     public static void main(String[] args) throws Exception {
-        SSLContext context;
-        KeyManagerFactory kmf;
-        KeyStore ks;
+        SSLContext sslContext;
+        KeyManagerFactory keyManagerFactory;
+        KeyStore keyStore;
 
         char[] passphrase = "12345678".toCharArray();
-        ks = KeyStore.getInstance("JKS");
-        ks.load(new FileInputStream("src/serverKeyStore.jks"), passphrase);
+        keyStore = KeyStore.getInstance("JKS");
+        keyStore.load(new FileInputStream("src/serverKeyStore.jks"), passphrase);
 
-        kmf = KeyManagerFactory.getInstance("SunX509");
-        kmf.init(ks, passphrase);
+        keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+        keyManagerFactory.init(keyStore, passphrase);
 
-        context = SSLContext.getInstance("TLSv1.3");
-        KeyManager[] keyManagers = kmf.getKeyManagers();
-        context.init(keyManagers, null, null);
+        sslContext = SSLContext.getInstance("TLSv1.3");
+        KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
+        sslContext.init(keyManagers, null, null);
 
-        SSLServerSocketFactory ssf = context.getServerSocketFactory();
-        ServerSocket ss = ssf.createServerSocket(PORT);
+        SSLServerSocketFactory sslServerSocketFactory = sslContext.getServerSocketFactory();
+        ServerSocket serverSocket = sslServerSocketFactory.createServerSocket(PORT);
 
-        SSLSocket s = (SSLSocket) ss.accept();
+        SSLSocket sslSocket = (SSLSocket) serverSocket.accept();
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
 
         String line;
-        while (((line = in.readLine()) != null)) {
+        while (((line = bufferedReader.readLine()) != null)) {
             System.out.println(line);
         }
-        in.close();
-        s.close();
+        bufferedReader.close();
+        sslSocket.close();
     }
 }
