@@ -7,51 +7,36 @@ import java.security.*;
 import javax.net.ssl.*;
 
 public class TLSServer {
-    // likely this port number is ok to use
     private static final int PORT = 8043;
 
     public static void main(String[] args) throws Exception {
-        //set necessary truststore properties - using JKS
-        //System.setProperty("javax.net.ssl.trustStore","c:/mypathto/truststore.jks");
-        //System.setProperty("javax.net.ssl.trustStorePassword","changeit");
-        // set up key manager to do server authentication
-        SSLContext context;
-        KeyManagerFactory kmf;
-        KeyStore ks;
+        SSLContext sslContext;
+        KeyManagerFactory keyManagerFactory;
+        KeyStore keyStore;
 
-        // First we need to load a keystore
         char[] passphrase = "12345678".toCharArray();
-        ks = KeyStore.getInstance("JKS");
-        ks.load(new FileInputStream("src/serverKeyStore.jks"), passphrase);
+        keyStore = KeyStore.getInstance("JKS");
+        keyStore.load(new FileInputStream("src/serverKeyStore.jks"), passphrase);
 
-        // Initialize a KeyManagerFactory with the KeyStore
-        kmf = KeyManagerFactory.getInstance("SunX509");
-        kmf.init(ks, passphrase);
+        keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+        keyManagerFactory.init(keyStore, passphrase);
 
-        // Create an SSLContext to run TLS and initialize it with KeyManagers from the KeyManagerFactory
-        context = SSLContext.getInstance("TLSv1.3");
-        KeyManager[] keyManagers = kmf.getKeyManagers();
-        context.init(keyManagers, null, null);
+        sslContext = SSLContext.getInstance("TLSv1.3");
+        KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
+        sslContext.init(keyManagers, null, null);
 
-        // First we need a SocketFactory that will create SSL server sockets.
-        SSLServerSocketFactory ssf = context.getServerSocketFactory();
-        // Create socket and Wait for a connection
-        ServerSocket ss = ssf.createServerSocket(PORT);
-        //  Socket s = ss.accept();
+        SSLServerSocketFactory sslServerSocketFactory = sslContext.getServerSocketFactory();
+        ServerSocket serverSocket = sslServerSocketFactory.createServerSocket(PORT);
 
-        // alterternative: needed to set SSL/TLS behaviour
-        SSLSocket s = (SSLSocket) ss.accept();
+        SSLSocket sslSocket = (SSLSocket) serverSocket.accept();
 
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
 
-        // Get the input stream. En/Decryption happens transparently.
-        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-
-        // Read through the input from the client and display it to the screen.
-        String line = null;
-        while (((line = in.readLine()) != null)) {
+        String line;
+        while (((line = bufferedReader.readLine()) != null)) {
             System.out.println(line);
         }
-        in.close();
-        s.close();
+        bufferedReader.close();
+        sslSocket.close();
     }
 }
