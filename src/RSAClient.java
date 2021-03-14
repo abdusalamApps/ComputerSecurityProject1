@@ -185,9 +185,7 @@ public class RSAClient {
             String rightSide = parseRight(se, xPos);
             System.out.println("rightSide = " + rightSide);
 
-            String replaceTarget = leftSide + " " + operation + " " + rightSide;
-            System.out.println("replaceTarget = " + replaceTarget);
-            se = se.replace(replaceTarget,
+            se = se.replace(leftSide + " " + operation + " " + rightSide,
                     String.valueOf(operateExpression(operation, leftSide, rightSide)));
             System.out.println();
         }
