@@ -101,6 +101,46 @@ public class RSAClient {
         return message.pow(Integer.parseInt(e.toString())).mod(n);
     }
 
+    public BigInteger encryptManually(BigInteger message) {
+        System.out.println("-----------------Encrypting message(" + message + ")------------------------");
+        int exponent = Integer.parseInt(e.toString());
+        List<Integer> exponents = new ArrayList<>();
+        List<String> steps = new ArrayList<>();
+        while (exponent > 10) {
+            exponents.add(exponent);
+            if (exponent % 2 == 0) {
+                exponent /= 2;
+            } else {
+                exponent--;
+            }
+//            System.out.println(message + "^" + exponent + "mod(" + n + ") = ");
+        }
+        BigInteger answer = BigInteger.ONE;
+        for (int i = exponents.size() - 1; i >= 0; i--) {
+            if (i == exponents.size() - 1) {
+                answer = message.pow(exponents.get(i)).mod(n);
+                steps.add(message + "^" + exponents.get(i) + "mod(" + n + ") = "
+                        + answer);
+            } else {
+                if (exponents.get(i) / exponents.get(i + 1) == 2) {
+                    steps.add(message + "^" + exponents.get(i) + "mod(" + n + ") = "
+                            + answer + "^2mod(" + n + ") = " + (answer.pow(2)).mod(n));
+                    answer = (answer.pow(2)).mod(n);
+                }
+                if (exponents.get(i) - exponents.get(i + 1) == 1) {
+                    steps.add(message + "^" + exponents.get(i) + "mod(" + n + ") = "
+                            + " (" + answer + "*" + message + ")mod(" + n + ") = "
+                            + answer.multiply(message).mod(n));
+                    answer = answer.multiply(message).mod(n);
+                }
+            }
+        }
+        for (int i = steps.size() - 1; i >= 0; i--) {
+            System.out.println(steps.get(i));
+        }
+        return answer;
+    }
+
     public String simplifyExpression(String expression) {
         String se = expression;
         System.out.println("--------------------Simplifying: " + expression + "------------------------");
@@ -160,7 +200,6 @@ public class RSAClient {
 
         return se;
     }
-
 
     private String simplifyHelper(String expression) {
         String se = expression;

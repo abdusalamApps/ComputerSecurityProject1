@@ -27,6 +27,7 @@ public class Cryptographer {
         System.out.println("message?");
         BigInteger message = new BigInteger(scanner.nextLine().trim());
         System.out.println("Cipher = " + rsaClient.encrypt(message));
+        System.out.println("Cipher = " + rsaClient.encryptManually(message));
 /*
         rsaClient.calculateD();
 
